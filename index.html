@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EPSA — Gestión de Nuevos Productos Alimentarios</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     AUTH SCREEN
+═══════════════════════════════════════════════════════════ -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logo-mark">EP</div>
+      <h1>EPSA</h1>
+      <p>Gestión de Nuevos Productos Alimentarios</p>
+    </div>
+    <div class="auth-form">
+      <div>
+        <label for="login-role">Acceder como</label>
+        <select id="login-role">
+          <option value="">— Seleccionar rol —</option>
+          <option value="comercial">Ana García — Comercial</option>
+          <option value="director_un">Carlos Martínez — Director/a UN</option>
+          <option value="directora_id">Laura Sánchez — Directora I+D</option>
+          <option value="admin">Admin EPSA — Administrador</option>
+        </select>
+      </div>
+      <div>
+        <label for="login-password">Contraseña (cualquiera para el prototipo)</label>
+        <input type="password" id="login-password" placeholder="••••••••" autocomplete="off">
+      </div>
+      <button class="btn-login" id="btn-login">Entrar →</button>
+      <p class="auth-hint">🔒 Prototipo — cualquier contraseña es válida</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     APP
+═══════════════════════════════════════════════════════════ -->
+<div id="app" class="hidden">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo-mark">EP</div>
+      <div class="sidebar-title">
+        <h2>EPSA</h2>
+        <p>Nuevos Productos</p>
+      </div>
+    </div>
+    <div class="sidebar-accent"></div>
+    <div class="sidebar-user">
+      <div class="sidebar-user-avatar" id="sidebar-avatar">?</div>
+      <div class="sidebar-user-info">
+        <div class="sidebar-user-name" id="sidebar-user-name">—</div>
+        <span class="sidebar-user-role" id="sidebar-user-role">—</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-nav-section">Navegación</div>
+      <button class="nav-item" data-page="dashboard">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Panel de Control</span>
+      </button>
+      <button class="nav-item" data-page="new">
+        <span class="nav-icon">➕</span>
+        <span class="nav-label">Nueva Solicitud</span>
+      </button>
+      <button class="nav-item" data-page="projects">
+        <span class="nav-icon">📋</span>
+        <span class="nav-label">Proyectos</span>
+      </button>
+      <button class="nav-item" data-page="history">
+        <span class="nav-icon">📜</span>
+        <span class="nav-label">Historial</span>
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn-logout" id="btn-logout">
+        <span class="nav-icon">⏏</span>
+        <span class="nav-label">Cerrar sesión</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- ─────────────────────────────────────────────────────
+         DASHBOARD
+    ───────────────────────────────────────────────────── -->
+    <div id="page-dashboard" class="page">
+      <div class="page-header">
+        <div>
+          <h1>Panel de Control</h1>
+          <p>Resumen del estado de solicitudes de nuevos productos</p>
+        </div>
+        <div class="flex gap-8">
+          <button class="btn btn-secondary btn-sm" id="btn-reset-demo" title="Restaurar datos demo">🔄 Restaurar demo</button>
+          <button class="btn btn-new" onclick="App.navigateTo('new')">➕ Nueva Solicitud</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="dashboard-stats">
+        <div class="stat-card total" data-val="0" id="sc-total">
+          <div class="stat-label">Total</div>
+          <div class="stat-value" id="stat-total">0</div>
+          <div class="stat-sub">solicitudes</div>
+        </div>
+        <div class="stat-card s-pendiente-comercial" data-val="0" id="sc-pc">
+          <div class="stat-label">Pdte. Comercial</div>
+          <div class="stat-value" id="stat-pc">0</div>
+          <div class="stat-sub">en borrador</div>
+        </div>
+        <div class="stat-card s-pendiente-un" data-val="0" id="sc-un">
+          <div class="stat-label">Pdte. UN</div>
+          <div class="stat-value" id="stat-un">0</div>
+          <div class="stat-sub">en evaluación</div>
+        </div>
+        <div class="stat-card s-pendiente-id" data-val="0" id="sc-id">
+          <div class="stat-label">Pdte. I+D</div>
+          <div class="stat-value" id="stat-id">0</div>
+          <div class="stat-sub">en formulación</div>
+        </div>
+        <div class="stat-card s-aprobado" data-val="0" id="sc-aprobado">
+          <div class="stat-label">Aprobados</div>
+          <div class="stat-value" id="stat-aprobado">0</div>
+          <div class="stat-sub">proyectos ok</div>
+        </div>
+        <div class="stat-card s-rechazado" data-val="0" id="sc-rechazado">
+          <div class="stat-label">Rechazados</div>
+          <div class="stat-value" id="stat-rechazado">0</div>
+          <div class="stat-sub">no viables</div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="dashboard-charts">
+        <div class="card">
+          <div class="card-title">Distribución por Estado</div>
+          <div class="chart-container">
+            <canvas id="chart-doughnut"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Evolución Mensual de Solicitudes</div>
+          <div class="chart-container">
+            <canvas id="chart-bar"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent projects -->
+      <div class="card dashboard-recent">
+        <div class="flex justify-between items-center mb-16">
+          <div class="card-title" style="margin-bottom:0">Últimos Proyectos</div>
+          <button class="btn btn-outline btn-sm" onclick="App.navigateTo('projects')">Ver todos →</button>
+        </div>
+        <div class="recent-list" id="recent-projects"></div>
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────────────────────────
+         NUEVA SOLICITUD / WIZARD
+    ───────────────────────────────────────────────────── -->
+    <div id="page-new" class="page">
+      <div class="page-header">
+        <div id="wizard-title">
+          <h1>Nueva Solicitud</h1>
+          <p>Complete los pasos según su rol en el proceso</p>
+        </div>
+      </div>
+
+      <!-- Step indicators -->
+      <div class="card" style="padding:12px 16px;margin-bottom:20px;">
+        <div id="wizard-step-indicators" class="wizard-step-indicator" style="flex-wrap:wrap;gap:4px"></div>
+      </div>
+
+      <!-- Step content -->
+      <div id="wizard-step-content" class="wizard-body"></div>
+
+      <!-- Nav buttons -->
+      <div class="card" style="padding:16px 20px;margin-top:16px;">
+        <div id="wizard-nav" class="wizard-nav"></div>
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────────────────────────
+         PROYECTOS
+    ───────────────────────────────────────────────────── -->
+    <div id="page-projects" class="page">
+      <div class="page-header">
+        <div>
+          <h1>Proyectos</h1>
+          <p>Lista de todas las solicitudes de nuevos productos</p>
+        </div>
+        <button class="btn btn-new" onclick="App.navigateTo('new')">➕ Nueva Solicitud</button>
+      </div>
+
+      <div class="card">
+        <!-- Toolbar -->
+        <div class="projects-toolbar">
+          <input type="text" id="filter-search" placeholder="🔍  Buscar por ID, empresa, descripción...">
+          <select id="filter-state">
+            <option value="">Todos los estados</option>
+            <option value="Pendiente Comercial">Pendiente Comercial</option>
+            <option value="Pendiente UN">Pendiente UN</option>
+            <option value="Pendiente I+D">Pendiente I+D</option>
+            <option value="Aprobado">Aprobado</option>
+            <option value="Rechazado">Rechazado</option>
+          </select>
+        </div>
+
+        <!-- Table -->
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Nº Proyecto</th>
+                <th>Fecha</th>
+                <th>Razón Social</th>
+                <th>Descripción</th>
+                <th>Estado</th>
+                <th>GO Comercial</th>
+                <th>GO Técnica</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="projects-tbody">
+              <tr><td colspan="8">
+                <div class="empty-state">
+                  <div class="empty-icon">⏳</div>
+                  <h3>Cargando proyectos...</h3>
+                </div>
+              </td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────────────────────────
+         HISTORIAL
+    ───────────────────────────────────────────────────── -->
+    <div id="page-history" class="page">
+      <div class="page-header">
+        <div>
+          <h1>Historial de Actividad</h1>
+          <p>Registro cronológico de todas las acciones realizadas</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="activity-feed" id="activity-feed">
+          <div class="empty-state">
+            <div class="empty-icon">📜</div>
+            <h3>Cargando historial...</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     MODAL — DETALLE DE PROYECTO
+═══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-detail">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modal-detail-title">Detalle del Proyecto</h2>
+      <button class="modal-close" id="modal-detail-close">✕</button>
+    </div>
+    <div class="modal-body" id="modal-detail-body">
+      <!-- content injected by JS -->
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="modal-detail-close-btn">Cerrar</button>
+      <button class="btn btn-outline" id="modal-edit-btn">✏️ Editar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TOAST CONTAINER
+═══════════════════════════════════════════════════════════ -->
+<div id="toast-container"></div>
+
+<!-- SCRIPTS -->
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
